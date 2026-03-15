@@ -17,7 +17,6 @@ function Dashboard() {
   useEffect(() => {
     const buscarDados = async () => {
       try {
-
         const response = await axios.get<{ iptu: Iptuu[] }>(
           "http://localhost:3001/usuario/iptu-por-usuario?usuarioId=" + user.id
         );
@@ -39,6 +38,7 @@ function Dashboard() {
         console.error("Erro ao buscar comentários", error);
       }
     };
+
     if (user?.id) {
       buscarDados();
       buscarComentarios();
@@ -54,7 +54,6 @@ function Dashboard() {
         texto: novoComentario,
       });
 
-      // Atualiza lista após enviar
       const response = await axios.get("http://localhost:3001/comentario");
       setComentarios(response.data);
 
@@ -63,6 +62,7 @@ function Dashboard() {
       console.error("Erro ao enviar comentário", error);
     }
   };
+
   const buscarCodigo = async () => {
     const response = await axios.get(
       "http://localhost:3001/usuario/codigo-qr-ou-barra?tipo=" + tipoCodigo
@@ -70,9 +70,6 @@ function Dashboard() {
 
     setHtmlRetorno(response.data);
   };
-
-  // dados fictícios de IPTU
-
 
   return (
     <div style={styles.container}>
@@ -100,9 +97,9 @@ function Dashboard() {
       <div style={styles.card}>
         <h3>IPTU</h3>
         {iptu && <p>Valor IPTU: {iptu.valor}</p>}
-        {/* <p>Status: {iptu && iptu.pago ? "Pago ✅" : "Em aberto ❌"}</p> */}
         <p>Status: {iptu?.valor}</p>
       </div>
+
       <select
         value={tipoCodigo}
         onChange={(e) => setTipoCodigo(e.target.value)}
@@ -114,15 +111,16 @@ function Dashboard() {
       <button onClick={buscarCodigo}>
         Gerar Código
       </button>
+
       {htmlRetorno && (
-        <div
-          dangerouslySetInnerHTML={{
-            __html: htmlRetorno,
-          }}
-        />
+        <div>
+          <img src={htmlRetorno} alt="Código gerado" />
+        </div>
       )}
+
       <div style={{ padding: "40px" }}>
         <h2>Lista de Comentários</h2>
+
         <div style={{ marginBottom: "20px" }}>
           <h3>Adicionar Comentário</h3>
 
@@ -142,24 +140,18 @@ function Dashboard() {
             Enviar Comentário
           </button>
         </div>
+
         <ul>
           {comentarios.map((comentario, index) => (
             <li key={index}>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: `
-                  <strong>Usuário:</strong> ${comentario.usuario_id}
-                  <br/>
-                  <strong>Mensagem:</strong> ${comentario.texto}
-                `,
-                }}
-              />
+              <strong>Usuário:</strong> {comentario.usuario_id}
+              <br />
+              <strong>Mensagem:</strong> {comentario.texto}
             </li>
           ))}
         </ul>
       </div>
     </div>
-
   );
 }
 
